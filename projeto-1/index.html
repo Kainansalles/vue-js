@@ -4,55 +4,69 @@
     <title>Matador de Monstro</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,600" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://unpkg.com/vue"></script>
 </head>
 <body>
     <div id="app">
-        <div class="panel scores">
-            <div class="score">
-                <h1>Jogador</h1>
-                <div class="life-bar">
-                    <div class="life"
-                        :class="{danger: playerLife < 20}"
-                        :style="{width: playerLife + '%'}"></div>
+        <div class="container">
+            <div class="row panel">
+                <div class="col-md-6" align="center">
+                    <h3>Jogador</h3>
+                    <div class="progress">
+                        <div class="progress-bar" :class="{'progress-bar-danger': playerLife < 20, 'progress-bar-warning': playerLife < 50 }" role="progressbar" v-bind:aria-valuenow="playerLife" aria-valuemax="100" :style="{ width: playerLife + '%' }">
+                            {{ playerLife }}%
+                        </div>
+                    </div>
+                    <div class="row">
+                        <span v-if="explosionLife">
+                            <img src="https://www.fg-a.com/arrows/green-spin-arrow-up.gif" alt="">
+                        </span>
+                        <div class="imagem" v-if="explosionPlayer">
+                            <img class="objectImage" src="ezgif.com-crop.webp" alt="">
+                        </div>
+                    </div>
                 </div>
-                <div>{{ playerLife }}%</div>
-            </div>
-            <div class="score">
-                <h1>Monstro</h1>
-                <div class="life-bar">
-                    <div class="life"
-                        :class="{danger: monsterLife < 20}"
-                        :style="{width: monsterLife + '%'}"></div>
+                <div class="col-md-6" align="center">
+                    <h3>Monstro</h3>
+                    <div class="progress">
+                        <div class="progress-bar" :class="{'progress-bar-danger': monsterLife < 20, 'progress-bar-warning': monsterLife < 50}" role="progressbar" v-bind:aria-valuenow="monsterLife" aria-valuemin="0" aria-valuemax="100" :style="{ width: monsterLife + '%' }">
+                            {{ monsterLife }}%
+                        </div>
+                    </div>
+                    <div class="imagem" v-if="explosionMonster">
+                        <img class="objectImage" src="ezgif.com-crop.webp" alt="">
+                    </div>
                 </div>
-                <div>{{ monsterLife }}%</div>
             </div>
-        </div>
-        <div v-if="hasResult" class="panel result">
-            <div v-if="monsterLife == 0" class="win">Você ganhou!!! :)</div>
-            <div v-else class="lose">Você perdeu! :(</div>
-        </div>
-        <div class="panel buttons">
-            <template v-if="running">
-                <button @click="attack(false)"
-                    class="btn attack">Ataque</button>
-                <button @click="attack(true)"
-                    class="btn especial-attack">Ataque Especial</button>
-                <button @click="healAndHurt"
-                    class="btn heal">Curar</button>
-                <button @click="running = false"
-                    class="btn give-up">Desistir</button>
-            </template>
-            <button v-else @click="startGame"
-                class="btn new-game">Iniciar Jogo</button>
-        </div>
-        <div v-if="logs.length"
-            class="panel logs">
-            <ul>
-                <li v-for="log in logs"
-                    :class="log.cls"
-                    class="log">{{ log.text }}</li>
-            </ul>
+
+            <div class="row panel result" v-if="hasResult">
+                <div class="col-md-12" align="center">
+                    <h3 v-if="playerLife == 0" class="lose">Você Perdeu :(</h3>
+                    <h3 v-else class="win">Você Ganhou :)(</h3>
+                </div>
+            </div>
+
+            <div class="col-md-12 panel" align="center">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" v-if="!running" @click="startGame" class="btn btn-primary">INICIAR NOVO JOGO</button>
+                    <div v-if="running">
+                        <button type="button" @click="attack(false)" class="btn btn-danger">ATAQUE</button>
+                        <button type="button" @click="attack(true)" class="btn btn-warning">ATAQUE ESPECIAL</button>
+                        <button type="button" @click="healAndHurt" class="btn btn-success">CURAR</button>
+                        <button type="button" @click="running = false" class="btn btn-default">DESISTIR</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 panel" v-if="logs.length" align="center">
+                <ul >
+                    <li v-for="log in logs"
+                        :class="log.cls"
+                        class="log">{{ log.text }}</li>
+                </ul>
+            </div>
         </div>
     </div>
     <script src="app.js"></script>
